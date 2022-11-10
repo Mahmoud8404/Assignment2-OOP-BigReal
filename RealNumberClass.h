@@ -6,33 +6,42 @@
 #include <regex>
 
 using namespace std;
+#include <iostream>
+#include <deque>
+#include <regex>
+
+using namespace std;
 
 class BigDecimalInt{
-protected:
+private:
     string number;
-    char sign;
-    void setNumber(string num);
+    char signNumber;
     bool checkValidInput(string input);
 
 public:
     bool operator < (const BigDecimalInt& anotherDec);
     bool operator > (const BigDecimalInt& anotherDec);
     bool operator == (const BigDecimalInt anotherDec);
-    BigDecimalInt& operator = (BigDecimalInt &anotherDec);
+    BigDecimalInt& operator = (BigDecimalInt anotherDec);
     BigDecimalInt operator + (BigDecimalInt number2);
     BigDecimalInt operator - (BigDecimalInt anotherDec);
     friend ostream &operator << (ostream &out, BigDecimalInt num);
     int size();
-    int Sign();
+    int sign();
+    void setNumber(string num);
+    string getNumber(){
+        return number;
+    }
 
     BigDecimalInt(){}
     BigDecimalInt(string num)
     {
         setNumber(num);
     }
+
 };
 
-class BigReal : public BigDecimalInt{
+/*class BigReal : public BigDecimalInt{
     private:
     void setRealNumber(string strReal);
     bool checkValidRealNumber(string input);
@@ -56,5 +65,5 @@ class BigReal : public BigDecimalInt{
         friend istream& operator >> (istream& out, BigReal num);
 
         BigReal(){}
-};
+};*/
 #endif
