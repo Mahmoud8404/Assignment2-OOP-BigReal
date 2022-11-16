@@ -1,5 +1,10 @@
+#include <utility>
+
 #include "RealNumberClass.h"
 
+//BigDecimal Int Functions
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // regex function that checks the validation of the input.
 bool BigDecimalInt :: checkValidInput(string input)
 {
@@ -151,7 +156,7 @@ string addition(string num1,string num2)
     }
     if (carry)
     {
-        res = char((carry) + '0') + res;
+        res += char((carry) + '0');
     }
     return res;
 }
@@ -256,7 +261,7 @@ BigDecimalInt BigDecimalInt :: operator - (BigDecimalInt anotherDec)
     {
         res = subtraction(num1,num2);
 
-        if(sign1=='-')ok = !ok;
+        if(sign1=='-') ok = !ok;
     }
     else
     {
@@ -340,4 +345,527 @@ ostream &operator << (ostream &out, BigDecimalInt num)
         }
     }
     return out;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------BigReal Functions--------------------------------------------------
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// Function sets arguments from string
+void BigReal :: setRealNumber(string input) {
+
+    // Erases sign and
+    fullNumber = std::move(input);
+    if (fullNumber[0] == '+') {
+        fullNumber.erase(0, 1);
+        signNumber = '+';
+    } else if (fullNumber[0] == '-') {
+        fullNumber.erase(0, 1);
+        signNumber = '-';
+    } else if (fullNumber[0] == '.') {
+        fullNumber.insert(0, "0");
+        signNumber = '+';
+    }else {
+        signNumber = '+';
+    }
+
+    //
+    string intNumber, floatNumber;
+    int index = 0;
+    while (fullNumber[index] != '.' && index < fullNumber.size()){
+        intNumber += fullNumber[index];
+        index++;
+    }
+
+    if (fullNumber[index] == '.'){
+        index++;
+        while(index < fullNumber.size()) {
+            floatNumber += fullNumber[index];
+            index++;
+        }
+    }else if (floatNumber.empty()){
+        floatNumber += "0";
+        goto exit;
+    }
+
+    exit:
+    realNumber = intNumber;
+    floatPointNumber = floatNumber;
+}
+
+// regex function that checks the validation of the input.
+bool BigReal :: checkNumberValid(const string& input) {
+    regex validInput("[-+]?([.]?[0-9]+||[0-9]+[.]{1}[0-9]+)");
+    return regex_match(input, validInput);
+}
+
+// Constructor sets real number from string
+BigReal :: BigReal(const string &input) {
+    if(checkNumberValid(input)){
+        setRealNumber(input);
+    }
+    else{
+        cout << "Invalid" << "\n";
+        exit(1);
+    }
+}
+
+// Constructor sets real number from different class object
+BigReal :: BigReal(BigDecimalInt bigInteger) {
+    fullNumber = getNumber();
+    signNumber = bigInteger.sign() ? '+' : '-';
+}
+
+// Constructor makes a copy of other objects of the same class
+BigReal :: BigReal(const BigReal &other) {
+
+    // Copying
+    fullNumber = other.fullNumber;
+    realNumber = other.realNumber;
+    signNumber = other.signNumber;
+    floatPointNumber = other.floatPointNumber;
+
+}
+
+// Constructor moves rvalues from other objects of the same class
+BigReal :: BigReal(BigReal &&other) noexcept {
+
+    // Moving rvalues to *this object from other object
+    this->fullNumber = other.fullNumber;
+    this->floatPointNumber = other.floatPointNumber;
+    this->realNumber = other.realNumber;
+    this->signNumber = other.signNumber;
+
+    // Clearing rvalues from original object
+    other.fullNumber.clear();
+    other.floatPointNumber.clear();
+    other.realNumber.clear();
+    other.signNumber = '\0';
+
+}
+
+// Assignment = Operator Overloading
+BigReal& BigReal :: operator= (const BigReal& other) {
+
+    // Assigning
+    fullNumber = other.fullNumber;
+    realNumber = other.realNumber;
+    signNumber = other.signNumber;
+    floatPointNumber = other.floatPointNumber;
+    return *this;
+}
+
+// Move = Operator Overloading
+BigReal& BigReal :: operator=(BigReal &&other) noexcept {
+
+    // Moving rvalues to *this object from original object
+    this->fullNumber = other.fullNumber;
+    this->realNumber = other.realNumber;
+    this->signNumber = other.signNumber;
+    this->floatPointNumber = other.floatPointNumber;
+
+    // Clearing rvalues from original object
+    other.fullNumber.clear();
+    other.realNumber.clear();
+    other.floatPointNumber.clear();
+    other.signNumber = '\0';
+    return *this;
+}
+
+// Function returns size of number
+int BigReal :: size() {
+    return fullNumber.length();
+}
+
+// Function returns sign of number
+int BigReal :: sign() {
+    return signNumber == '+';
+}
+
+// Operator < Overloading
+bool BigReal :: operator< (BigReal anotherReal) {
+    unsigned long long len1 = fullNumber.length(), len2 = anotherReal.fullNumber.length();
+
+    if (signNumber == '-' && anotherReal.signNumber == '+') {
+        return true;
+    }
+    else if (signNumber == '+' && anotherReal.signNumber == '-') {
+        return false;
+    }
+    else if (signNumber == '+' && anotherReal.signNumber == '+') {
+        if (len1 < len2) {
+            return true;
+        }
+        else if (len1 == len2) {
+            int index = 0;
+            while (index < len1) {
+                if ((fullNumber[index] - '0') == (anotherReal.fullNumber[index] - '0')) {
+                    index++;
+                }
+                else if ((fullNumber[index] - '0') < (anotherReal.fullNumber[index] - '0')) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+    } else {
+        if (len1 > len2) {
+            return true;
+        }
+        else if (len1 == len2) {
+            int index = 0;
+            while (index < len1) {
+                if ((fullNumber[index] - '0') == (anotherReal.fullNumber[index] - '0')) {
+                    index++;
+                }
+                else if ((fullNumber[index] - '0') < (anotherReal.fullNumber[index] - '0')) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        else {
+        return false;
+        }
+    }
+    exit(1);
+}
+
+// Operator == Overloading
+bool BigReal::operator== (const BigReal &anotherReal) {
+    return (signNumber == anotherReal.signNumber && fullNumber == anotherReal.fullNumber);
+}
+
+// Operator > Overloading
+bool BigReal :: operator> (BigReal anotherReal) {
+    unsigned long long len1 = fullNumber.length(), len2 = anotherReal.fullNumber.length();
+
+    if (signNumber == '-' && anotherReal.signNumber == '+') {
+        return false;
+    }
+    else if (signNumber == '+' && anotherReal.signNumber == '-') {
+        return true;
+    }
+    else if (signNumber == '+' && anotherReal.signNumber == '+') {
+        if (len1 > len2) {
+            return true;
+        }
+        else if (len1 == len2) {
+            int index = 0;
+            while (index <= len1) {
+                if ((fullNumber[index] - '0') == (anotherReal.fullNumber[index] - '0')) {
+                    index++;
+                }
+                else if ((fullNumber[index] - '0') > (anotherReal.fullNumber[index] - '0')) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        if (len1 < len2) {
+            return true;
+        }
+        else if (len1 == len2) {
+            int index = 0;
+            while (index <= len1) {
+                if ((fullNumber[index] - '0') == (anotherReal.fullNumber[index] - '0')) {
+                    index++;
+                }
+                else if ((fullNumber[index] - '0') > (anotherReal.fullNumber[index] - '0')) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    exit(1);
+}
+
+// Operator << Overloading
+ostream& operator<<(ostream& out, const BigReal& num) {
+    if(num.signNumber == '+' || num.fullNumber == "0"){
+        out << num.fullNumber ;
+    }
+    else{
+        out << num.signNumber << num.fullNumber ;
+    }
+    return out;
+}
+
+// Operator >> Overloading
+istream& operator>>(istream& out, BigReal& num) {
+    string input;
+    out >> input;
+    if(num.checkNumberValid(input)){
+        num.setRealNumber(input);
+    }
+    else{
+        cout << "Invalid" << "\n";
+        exit(1);
+    }
+}
+
+//
+void realAddition(string &real, string &fraction, string otherReal, string otherFraction){
+    int sum;
+    int carry;
+
+    ////
+    auto fractionIndex = fraction.rbegin();
+    auto otherFractionIndex = otherFraction.rbegin();
+
+    while (fractionIndex != fraction.rend()){
+        sum = ((*fractionIndex - '0') + (*otherFractionIndex - '0'));
+
+        if (sum >= 10){
+            carry = 1;
+        }
+        else{
+            carry = 0;
+        }
+
+        *fractionIndex = char((sum % 10) + '0');
+        *(fractionIndex + 1) = char(((*(fractionIndex + 1) - '0') + carry ) + '0');
+
+        fractionIndex++;
+        otherFractionIndex++;
+    }
+
+    //
+    if (carry){
+        real.back() = char(((real.back() - '0') + carry) + '0');
+    }
+
+    //
+     while (fraction.back() == 0){
+         fraction.pop_back();
+     }
+
+     ////
+    auto realIndex = real.rbegin();
+    auto otherRealIndex = otherReal.rbegin();
+
+    while (realIndex != real.rend()){
+        sum = ((*realIndex - '0') + (*otherRealIndex - '0'));
+
+        if (sum >= 10){
+            carry = 1;
+            sum %= 10;
+        }
+        else{
+            carry = 0;
+        }
+
+        *realIndex = char(sum + '0');
+        *(realIndex + 1) = char(((*(realIndex + 1) - '0') + carry ) + '0');
+
+        realIndex++;
+        otherRealIndex++;
+    }
+
+    //
+    if(carry){
+        real.insert(0, "1");
+    }
+}
+
+//
+void realSubtraction(string& real, string& fraction, string otherReal, string otherFraction) {
+    int sub;
+    int debt;
+
+    auto fractionIndex = fraction.rbegin();
+    auto otherFractionIndex = otherFraction.rbegin();
+
+    while (fractionIndex != fraction.rend()){
+        sub = ((*fractionIndex - '0') - (*otherFractionIndex - '0'));
+
+        if (sub < 0){
+            debt = 1;
+            sub += 10;
+        }
+        else{
+            debt = 0;
+        }
+
+
+        *fractionIndex = char(sub + '0');
+        if ((fractionIndex+1) != fraction.rend()) {
+            *(fractionIndex + 1) = char(((*(fractionIndex + 1) - '0') - debt) + '0');
+        }else{
+            if (debt){
+                real.back() = char(((real.back() - '0') - debt) + '0');
+            }
+        }
+
+        fractionIndex++;
+        otherFractionIndex++;
+    }
+
+    //
+    while (fraction.back() == '0' && fraction.length() != 1){
+        fraction.pop_back();
+    }
+
+    ////
+    auto realIndex = real.rbegin();
+    auto otherRealIndex = otherReal.rbegin();
+
+    while (realIndex != real.rend()){
+        sub = ((*realIndex - '0') - (*otherRealIndex - '0'));
+
+        if (sub < 0){
+            debt = 1;
+            sub += 10;
+        }
+        else{
+            debt = 0;
+        }
+
+        *realIndex = char(sub + '0');
+        *(realIndex + 1) = char(((*(realIndex + 1) - '0') - debt) + '0');
+
+        realIndex++;
+        otherRealIndex++;
+    }
+
+
+    //
+    while (real.front() == '0' && real.length() != 1){
+        real.erase(0,1);
+    }
+
+    //
+    if (debt){
+        real.front() = char(((real.front() - '0') - debt) + '0');
+    }
+
+    //
+    if((real.front() - '0') < 0){
+        real.front() = char(((real.front() - '0') + 10) + '0');
+    }
+
+}
+
+
+// Operator + Overloading
+BigReal BigReal::operator+(BigReal const &other) {
+
+    BigReal temp = other;
+    // Matching the lengths of numbers
+    if (realNumber.size() > temp.realNumber.size()){
+        while (realNumber.size() != temp.realNumber.size()){
+            temp.realNumber.insert(0, "0");
+        }
+    }
+    else if (realNumber.size() < temp.realNumber.size()){
+        while (realNumber.size() != temp.realNumber.size()){
+            realNumber.insert(0, "0");
+        }
+    }
+
+    if (floatPointNumber.length() > temp.floatPointNumber.length()){
+        while (floatPointNumber.length() != temp.floatPointNumber.length()){
+            temp.floatPointNumber.push_back('0');
+        }
+    }
+    else if (floatPointNumber.length() < temp.floatPointNumber.length()){
+        while (floatPointNumber.length() != temp.floatPointNumber.length()){
+            floatPointNumber.push_back('0');
+        }
+    }
+
+    //
+    if (signNumber == temp.signNumber) {
+        realAddition(realNumber, floatPointNumber, temp.realNumber, temp.floatPointNumber);
+    }
+    else if (realNumber > temp.realNumber) {
+        realSubtraction(realNumber, floatPointNumber, temp.realNumber, temp.floatPointNumber);
+    }
+    else{
+        realSubtraction(temp.realNumber, temp.floatPointNumber, realNumber, floatPointNumber);
+        swap(temp.realNumber, realNumber);
+        swap(temp.floatPointNumber, floatPointNumber);
+        if (signNumber == '+'){
+            signNumber = '-';
+        }else {
+            signNumber = '+';
+        }
+    }
+    fullNumber = realNumber + '.' +floatPointNumber;
+    temp = *this;
+    return temp;
+}
+
+BigReal BigReal::operator-(BigReal const &other) {
+
+    BigReal temp = other;
+
+    // Matching the lengths of numbers
+    if (realNumber.length() > temp.realNumber.length()){
+        while (realNumber.length() != temp.realNumber.length()){
+            temp.realNumber.insert(0, "0");
+        }
+    }
+    else if (realNumber.length() < temp.realNumber.length()){
+        while (realNumber.length() != temp.realNumber.length()){
+            realNumber.insert(0, "0");
+        }
+    }
+
+    if (floatPointNumber.length() > temp.floatPointNumber.length()){
+        while (floatPointNumber.length() != temp.floatPointNumber.length()){
+            temp.floatPointNumber.push_back('0');
+        }
+    }
+    else if (floatPointNumber.length() < temp.floatPointNumber.length()){
+        while (floatPointNumber.length() != temp.floatPointNumber.length()){
+            floatPointNumber.push_back('0');
+        }
+    }
+
+
+    //
+    if (signNumber != temp.signNumber) {
+        realAddition(realNumber, floatPointNumber, temp.realNumber, temp.floatPointNumber);
+    }
+    else if (realNumber > temp.realNumber) {
+        realSubtraction(realNumber, floatPointNumber, temp.realNumber, temp.floatPointNumber);
+    }
+    else{
+        realSubtraction(temp.realNumber, temp.floatPointNumber, realNumber, floatPointNumber);
+        swap(realNumber, temp.realNumber);
+        swap(floatPointNumber, temp.floatPointNumber);
+        if (signNumber == '+'){
+            signNumber = '-';
+        }else {
+            signNumber = '+';
+        }
+    }
+
+    fullNumber = realNumber + '.' + floatPointNumber;
+    temp = *this;
+    return temp;
 }

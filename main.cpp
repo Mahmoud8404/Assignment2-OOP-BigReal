@@ -1,119 +1,63 @@
+// FCAI – Object-Oriented Programming 1 – 2022 - Assignment 2
+// Program Name: RealNumber
+// Last Modification Date: 12/11/2022
+// Author - ID - Group: Mahmoud Saleh Mohammed Saleh - 20210788 - A
+/*
+description: In this program I developed a new C++ type (class) that inherits the class from last assignment.
+that can hold unlimited real number values and performs arithmetic operations on them.
+such as: +, -, <, and >.
+ */
+
 #include"RealNumberClass.h"
 using namespace std;
 
 
 int main() {
-    string n1 = "-34", n2 = "100", n3 = "-500", n4 = "7";
 
-    BigDecimalInt input(n1), input3(n2);
-    BigDecimalInt e = input + input3;
-    BigDecimalInt d = input - input3;
-    cout << "---------TEST ONE---------" << "\n";
-    cout << e;
-    cout << d;
-    cout << (input < input3) << "\n";
-    cout << (input > input3) << "\n";
-    cout << input.Sign() << "\n";
-    cout << input3.size() << "\n";
+    string exampleTest, otherExampleTest;
 
-    BigDecimalInt in(n1), in2(n3);
-    BigDecimalInt a = in + in2;
-    BigDecimalInt b = in - in2;
-    cout << "---------TEST TWO---------" << "\n";
-    cout << a;
-    cout << b;
-    cout << (in < in2) << "\n";
-    cout << (in > in2) << "\n";
-    cout << in2.Sign() << "\n";
-    cout << in.size() << "\n";
+    cout << "Please enter a real number: " << endl;
+    cin>>exampleTest;
 
-    BigDecimalInt input6(n2), input7(n3);
-    BigDecimalInt h = input6 + input7;
-    BigDecimalInt f = input6 - input7;
-    cout << "---------TEST THREE---------" << "\n";
-    cout << h;
-    cout << f;
-    cout << (input6 < input7) << "\n";
-    cout << (input6 > input7) << "\n";
-    cout << input6.Sign() << "\n";
-    cout << input7.size() << "\n";
+    cout << "Please enter a real number: " << endl;
+    cin>>otherExampleTest;
 
-    BigDecimalInt in1(n4), in3(n2);
-    BigDecimalInt k = in1 + in3;
-    BigDecimalInt l = in1 - in3;
-    cout << "---------TEST FOUR---------" << "\n";
-    cout << k;
-    cout << l;
-    cout << (in1 < in3) << "\n";
-    cout << (in1 > in3) << "\n";
-    cout << in1.Sign() << "\n";
-    cout << in3.size() << "\n";
 
-    BigDecimalInt test0(n3), test11(n3);
-    BigDecimalInt c = test0 + test11;
-    BigDecimalInt g = test0 - test11;
-    cout << "---------TEST FIVE---------" << "\n";
-    cout << c;
-    cout << g;
-    cout << (test0 < test11) << "\n";
-    cout << (test0 > test11) << "\n";
-    cout << test0.Sign() << "\n";
-    cout << test11.size() << "\n";
+    //////
+    cout << "Testing Addition: " << endl;
+    BigReal realObj(exampleTest), otherRealObj(otherExampleTest), defaultTestObj;
 
-    BigDecimalInt test(n3), test2(n2);
-    BigDecimalInt j = test + test2;
-    BigDecimalInt i = test - test2;
-    cout << "---------TEST SIX---------" << "\n";
-    cout << j;
-    cout << i;
-    cout << (test < test2) << "\n";
-    cout << (test > test2) << "\n";
-    cout << test.Sign() << "\n";
-    cout << test2.size() << "\n";
+    defaultTestObj = realObj + otherRealObj;
+    cout << exampleTest << " + " << otherExampleTest << " = " << defaultTestObj << endl;
 
-    BigDecimalInt test3(n2), test4(n1);
-    BigDecimalInt o = test3 + test4;
-    BigDecimalInt p = test3 - test4;
-    cout << "---------TEST SEVEN---------" << "\n";
-    cout << o;
-    cout << p;
-    cout << (test3 < test4) << "\n";
-    cout << (test3 > test4) << "\n";
-    cout << test3.Sign() << "\n";
-    cout << test4.size() << "\n";
+    //////
+    cout << "Testing Subtraction: " << endl;
+    BigReal realObj1(exampleTest), otherRealObj1(otherExampleTest), defaultTestObj1;
 
-    BigDecimalInt test5(n3), test6(n4);
-    BigDecimalInt q = test5 + test6;
-    BigDecimalInt w = test5 - test6;
-    cout << "---------TEST EIGHT---------" << "\n";
-    cout << q;
-    cout << w;
-    cout << (test5 < test6) << "\n";
-    cout << (test5 > test6) << "\n";
-    cout << test5.Sign() << "\n";
-    cout << test6.size() << "\n";
+    defaultTestObj1 = realObj1 - otherRealObj1;
+    cout << exampleTest << " - " << otherExampleTest << " = " << defaultTestObj1 << endl;
 
-    BigDecimalInt test7(n3), test8(n1);
-    BigDecimalInt m = test7 + test8;
-    BigDecimalInt n = test7 - test8;
-    cout << "---------TEST NINE---------" << "\n";
-    cout << m;
-    cout << n;
-    cout << (test7 < test8) << "\n";
-    cout << (test7 > test8) << "\n";
-    cout << test7.Sign() << "\n";
-    cout << test8.size() << "\n";
+    /////
+    cout << "Testing Subtraction with opposite numbers positions: " << endl;
+    BigReal realObj2(exampleTest), otherRealObj2(otherExampleTest), defaultTestObj2;
 
-    BigDecimalInt test9(n2), test10(n4);
-    BigDecimalInt x = test9 + test10;
-    BigDecimalInt y = test9 - test10;
-    cout << "---------TEST TEN---------" << "\n";
-    cout << x;
-    cout << y;
-    cout << (test9 < test10) << "\n";
-    cout << (test9 > test10) << "\n";
-    cout << test9.Sign() << "\n";
-    cout << test10.size() << "\n";
+    defaultTestObj2 = otherRealObj2 - realObj2;
+    cout << otherExampleTest << " - " << exampleTest << " = " << defaultTestObj2 << endl;
 
-    return 0;
+    ///////
+    BigReal realObj3(exampleTest), otherRealObj3(otherExampleTest);
+    cout << "Testing comparison operators: \n"
+         << exampleTest << " > " << otherExampleTest << " = " << (realObj3 > otherRealObj3) << '\n'
+         << exampleTest << " < " << otherExampleTest << " = " << (realObj3 < otherRealObj3) << endl;
+    cout << "First Number: " << exampleTest << '\n'
+         << "Sign: " << realObj3.sign() << endl;
+    cout << "Second Number: " << otherExampleTest << '\n'
+         << "Size: " << otherRealObj3.size() << endl;
+
+
+    exit(0);
 }
+
+
+
+
